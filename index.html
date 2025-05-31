@@ -265,18 +265,23 @@
 
         if (!response.ok) {
           let errorText = `Error ${response.status}: ${response.statusText}`;
-          try {
-            const errorData = await response.json(); 
-            if (errorData && errorData.error) {
-              errorText = errorData.error; 
-            }
-          } catch (e) {
-            const textualError = await response.text(); 
-            console.error("Could not parse error response as JSON. Raw response:", textualError, e);
-            if (response.status === 0 || !response.statusText) { 
-                 errorText = 'Failed to connect to the survey server. Please check your internet connection or if the server is reachable.';
-            } else {
-                 errorText = `Server returned an error (Status: ${response.status}). Please check the browser console for more details if you are the developer.`;
+          // If status is 302, it's likely a redirect to login due to incorrect deployment permissions
+          if (response.status === 302) {
+            errorText = 'Request was redirected (Status 302). This often means the Google Apps Script is not deployed with "Who has access: Anyone". Please check deployment settings.';
+          } else {
+            try {
+              const errorData = await response.json(); 
+              if (errorData && errorData.error) {
+                errorText = errorData.error; 
+              }
+            } catch (e) {
+              const textualError = await response.text(); 
+              console.error("Could not parse error response as JSON. Raw response:", textualError, e);
+              if (response.status === 0 || !response.statusText) { 
+                   errorText = 'Failed to connect to the survey server. Please check your internet connection or if the server is reachable.';
+              } else {
+                   errorText = `Server returned an error (Status: ${response.status}). Please check the browser console for more details if you are the developer.`;
+              }
             }
           }
           throw new Error(errorText);
@@ -322,18 +327,19 @@
       
       if (displayMessage.toLowerCase().includes('failed to fetch') || 
           displayMessage.toLowerCase().includes('networkerror') || 
-          displayMessage.toLowerCase().includes('failed to connect')) { 
-        displayMessage = 'NETWORK/CONNECTION ERROR: Could not reach the survey script. Please try these steps: <br><br>';
+          displayMessage.toLowerCase().includes('failed to connect') ||
+          displayMessage.toLowerCase().includes('status 302')) { // Check for 302 specifically
+        displayMessage = 'NETWORK/CONNECTION ERROR or DEPLOYMENT ISSUE: Could not properly reach the survey script. Please try these steps: <br><br>';
         displayMessage += '<strong>1. Check Internet Connection:</strong> Ensure you are connected to the internet.<br><br>';
         displayMessage += '<strong>2. Live URL & Correct Script Link:</strong> Verify you are accessing this website via its live GitHub Pages URL (e.g., <em>your-username.github.io/your-repo/</em>) and NOT as a local file (<em>file:///...</em>). Also, double-check that the `GAS_WEB_APP_URL` in this website\'s code is the correct `/exec` URL from your Google Apps Script deployment.<br><br>';
-        displayMessage += '<strong>3. Apps Script Deployment Settings:</strong> Confirm your Google Apps Script is deployed with:<br>';
+        displayMessage += '<strong>3. CRITICAL - Apps Script Deployment Settings:</strong> Confirm your Google Apps Script is deployed (or re-deployed if you made changes) with:<br>';
         displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;- Execute as: <strong>Me (your email)</strong><br>';
-        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;- Who has access: <strong>Anyone</strong><br>(If you recently re-deployed, ensure these settings are still correct and you are using the LATEST deployment URL).<br><br>';
+        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;- Who has access: <strong>Anyone</strong><br><strong><em>(A 302 redirect often means this is set to "Anyone with Google Account" or "Only myself". It MUST be "Anyone" for this to work.)</em></strong><br>(If you recently re-deployed, ensure these settings are still correct and you are using the LATEST deployment URL).<br><br>';
         displayMessage += '<strong>4. Browser Developer Tools (Network Tab):</strong><br>';
         displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;a. Open Developer Tools (usually F12).<br>';
         displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;b. Go to the "Network" tab.<br>';
         displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;c. Click the "Generate Survey Form" button again.<br>';
-        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;d. Look for a request to `script.google.com/...` that failed. Check its "Status" (e.g., `(failed)`, `CORS error`, `0`, `401`, `403`, `404`, `500`). The "Response" or "Preview" tab for that failed request might give more clues. CORS errors are common if the Apps Script isn\'t correctly configured for "Anyone" access.<br><br>';
+        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;d. Look for a request to `script.google.com/...` that failed or was redirected (Status 302). Check its "Status" (e.g., `(failed)`, `CORS error`, `0`, `302`, `401`, `403`, `404`, `500`). The "Response" or "Preview" tab for that request might give more clues. CORS errors or 302 redirects are common if the Apps Script isn\'t correctly configured for "Anyone" access.<br><br>';
         displayMessage += '<strong>5. Apps Script Executions Log:</strong> In your Google Apps Script project, go to the "Executions" section (left sidebar). Look for recent executions of your `doGet` function. Check if they failed and what error messages are shown there. This helps identify server-side issues.<br><br>';
         displayMessage += '<strong>6. Browser Extensions / Incognito Mode:</strong> Ad blockers, privacy extensions, or VPNs can sometimes interfere. Try disabling them temporarily, or test the website in an incognito/private browser window.<br><br>';
         displayMessage += '<strong>7. Wait and Retry:</strong> Occasionally, there might be temporary issues with Google\'s services. You can try again after a few minutes.';
