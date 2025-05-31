@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hate Speech Reasoning Survey</title>
+  <script src="https://cdn.tailwindcss.com"></script> 
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Styles from your Page.html - slightly adjusted for standalone context */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ede9fe; /* lavender-100 from Page.html */
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: 95vw;
+      max-width: 900px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      margin: 20px auto;
+    }
+    .container:hover { transform: translateY(-5px); }
+
+    .header {
+      padding: 28px;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6); /* purple-600 → purple-800 */
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 2.5rem; /* Adjusted for better responsiveness */
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 1px;
+      line-height: 1.2;
+    }
+
+    .body-content { /* Renamed from .body to avoid conflict with <body> tag */
+      padding: 32px 24px;
+    }
+    .description {
+      font-size: 1.1rem; /* Adjusted */
+      font-weight: 500; /* Adjusted from 600 */
+      color: #374151; /* Slightly lighter than #111827 */
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .section {
+      background: #f3e8ff; /* lavender-200 */
+      border-left: 6px solid #7c3aed; /* purple-600, slightly thinner border */
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.3rem; /* Adjusted */
+      font-weight: 600;
+      color: #1f2937; /* Darker for better contrast */
+      margin-bottom: 12px;
+    }
+    .section p, .section ul {
+      font-size: 1rem;
+      color: #4b5563;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+    .section ul {
+      list-style: disc inside;
+      padding-left: 8px; /* Adjusted from margin-left */
+    }
+
+    .form-wrapper { text-align: center; margin-bottom: 32px; }
+    .btn-create {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 50px; /* Slightly adjusted padding */
+      font-size: 1.125rem; /* Adjusted */
+      font-weight: 600; /* Adjusted from 700 */
+      color: #ffffff;
+      background: linear-gradient(90deg, #8b5cf6, #7c3aed); /* purple-500 → purple-600 */
+      border: none;
+      border-radius: 30px; /* Adjusted */
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(124,58,237,0.3); /* Adjusted shadow */
+      transition: box-shadow 0.3s ease, transform 0.2s ease, background 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px; /* Adjusted */
+    }
+    .btn-create:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(124,58,237,0.4); /* Adjusted shadow */
+      background: linear-gradient(90deg, #7c3aed, #6d28d9); /* Darker gradient on hover */
+    }
+     .btn-create:disabled {
+        background: #d8b4fe; /* Lighter purple for disabled state */
+        box-shadow: none;
+        transform: translateY(0);
+        cursor: not-allowed;
+    }
+
+
+    #output { 
+        text-align: center; 
+        padding: 0 20px 32px; 
+        min-height: 100px; /* Ensure space for messages */
+    }
+    .result-card {
+      display: inline-block;
+      background: #ffffff;
+      border: 1px solid #ddd6fe; /* lavender-200 */
+      padding: 24px 32px; /* Increased padding */
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08); /* Softer shadow */
+      margin-top: 10px;
+    }
+    .result-card p {
+      font-size: 1.15rem; /* Adjusted */
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 16px; /* Increased margin */
+    }
+    .result-link {
+      display: inline-block;
+      background: #7c3aed; /* purple-600 */
+      color: #ffffff;
+      padding: 14px 32px; /* Adjusted padding */
+      border-radius: 28px; /* More rounded */
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none; /* Ensure no underline */
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .result-link:hover {
+      transform: translateY(-2px);
+      background: #6d28d9; /* purple-700 */
+    }
+    .message-feedback { /* For loading/error messages */
+        font-size: 1rem;
+        font-weight: 500;
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: left; /* Align troubleshooting steps to the left */
+    }
+    .loading-message { 
+        color: #5b21b6; /* Purple text */
+        background-color: #f3e8ff; /* Light lavender background */
+        border: 1px solid #ddd6fe; 
+        text-align: center;
+    }
+    .error-message { 
+        color: #9f1239; /* Dark red text */
+        background-color: #fee2e2; /* Light red background */
+        border: 1px solid #fecaca;
+    }
+    .config-warning-message { 
+        color: #d97706; /* Amber text */
+        background-color: #fef3c7; /* Light amber background */
+        border: 1px solid #fde68a;
+        font-weight: 600; /* Bolder for warning */
+        margin-bottom: 1rem; 
+        text-align: center;
+    }
+
+
+    .footer {
+      text-align: center;
+      font-size: 0.875rem;
+      color: #6b21a8; /* purple-800 */
+      padding: 20px 16px; /* Increased padding */
+      border-top: 1px solid #e9d5ff; /* lavender-300 */
+    }
+
+    /* Responsive adjustments from Page.html */
+    @media (max-width: 768px) {
+        .header h1 { font-size: 2rem; }
+        .description { font-size: 1rem; }
+        .section h2 { font-size: 1.15rem; }
+        .btn-create { padding: 16px 40px; font-size: 1rem; }
+        .result-card p { font-size: 1.05rem; }
+        .result-link { padding: 12px 28px; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="configWarningArea" class="message-feedback" style="display: none; margin: 10px 24px;">
+    </div>
+    <div class="header">
+      <h1>Hate Speech Reasoning Survey</h1>
+    </div>
+    <div class="body-content">
+      <p class="description">
+        Welcome to the Hate Speech Recognition Survey! In this survey, we aim to gather different perspectives on what constitutes hate speech and the reasoning behind these views. You’ll be presented with 5 statements. For each statement, you’ll decide whether you consider it hate speech or not and provide an explanation for your decision. Your insights will help improve understanding in this important area.
+      </p>
+
+      <div class="section">
+        <h2>Key Features</h2>
+        <ul>
+          <li>Each participant will receive 5 personalized questions.</li>
+          <li>Questions will be shuffled automatically to ensure uniqueness.</li>
+          <li>You will get a personalized survey link upon clicking the "Generate Survey Form" button.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Instructions</h2>
+        <ul>
+          <li>Click the "Generate Survey Form" button to get your personalized survey.</li>
+          <li>Wait a few seconds for the survey link to appear.</li>
+          <li>Click the survey link to open your form.</li>
+          <li>Answer 5 questions: For each, decide if it’s hate speech or not.</li>
+          <li>If you think it is hate speech, explain why.</li>
+          <li>Submit your responses.</li>
+        </ul>
+      </div>
+
+      <div class="form-wrapper">
+        <div id="testForm">
+          <button type="button" id="generateSurveyButton" class="btn-create">Generate Survey Form</button>
+        </div>
+      </div>
+
+      <div id="output">
+          </div>
+    </div>
+    <div class="footer">Powered by Google Apps Script & GitHub Pages © 2025</div>
+  </div>
+
+  <script>
+    // The Google Apps Script Web App URL you provided
+    const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwESGFXGcEj93lYtPkGIPjyeslgqvHqmIqAaqV9ZlNnmqrWf3Cdf5VtEezGS4zesmAt/exec';
+
+    const generateButton = document.getElementById('generateSurveyButton');
+    const outputDiv = document.getElementById('output');
+    const configWarningArea = document.getElementById('configWarningArea'); 
+
+    if (GAS_WEB_APP_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+        configWarningArea.innerHTML = '<strong>CONFIGURATION ERROR:</strong> The Google Apps Script Web App URL is still a placeholder. Please edit this HTML file and update it.';
+        configWarningArea.className = 'message-feedback config-warning-message';
+        configWarningArea.style.display = 'block';
+        generateButton.disabled = true; 
+    }
+
+    generateButton.addEventListener('click', handleFormSubmit);
+
+    async function handleFormSubmit() {
+      generateButton.disabled = true;
+      generateButton.textContent = 'GENERATING...';
+      outputDiv.innerHTML = '<p class="message-feedback loading-message">Fetching your survey link, please wait...</p>';
+
+      try {
+        const response = await fetch(GAS_WEB_APP_URL); 
+
+        if (!response.ok) {
+          let errorText = `Error ${response.status}: ${response.statusText}`;
+          try {
+            const errorData = await response.json(); 
+            if (errorData && errorData.error) {
+              errorText = errorData.error; 
+            }
+          } catch (e) {
+            const textualError = await response.text(); 
+            console.error("Could not parse error response as JSON. Raw response:", textualError, e);
+            if (response.status === 0 || !response.statusText) { 
+                 errorText = 'Failed to connect to the survey server. Please check your internet connection or if the server is reachable.';
+            } else {
+                 errorText = `Server returned an error (Status: ${response.status}). Please check the browser console for more details if you are the developer.`;
+            }
+          }
+          throw new Error(errorText);
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.formUrl) {
+          showLink(data.formUrl);
+          generateButton.textContent = 'FORM GENERATED!';
+        } else if (data.error) {
+          throw new Error(data.error);
+        } else {
+          throw new Error('Unexpected response format from server. Please ensure the Apps Script returns valid JSON ({success: true, formUrl: "..."} or {success: false, error: "..."}).');
+        }
+
+      } catch (error) {
+        console.error("Fetch error:", error); 
+        showError(error); 
+        generateButton.disabled = false; 
+        generateButton.textContent = 'Generate Survey Form';
+      }
+    }
+
+    function showLink(url) {
+      outputDiv.innerHTML = ''; 
+      const card = document.createElement('div');
+      card.className = 'result-card';
+      const text = document.createElement('p');
+      text.textContent = 'Your Survey form is ready!'; 
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.className = 'result-link';
+      link.textContent = 'Go to Survey Form'; 
+      card.append(text, link);
+      outputDiv.appendChild(card);
+    }
+
+    function showError(error) {
+      console.error("Displaying error in showError:", error); 
+      let displayMessage = (error && error.message) ? String(error.message) : 'An unknown error occurred. Please try again.';
+      
+      if (displayMessage.toLowerCase().includes('failed to fetch') || 
+          displayMessage.toLowerCase().includes('networkerror') || 
+          displayMessage.toLowerCase().includes('failed to connect')) { 
+        displayMessage = 'NETWORK/CONNECTION ERROR: Could not reach the survey script. Please try these steps: <br><br>';
+        displayMessage += '<strong>1. Check Internet Connection:</strong> Ensure you are connected to the internet.<br><br>';
+        displayMessage += '<strong>2. Live URL & Correct Script Link:</strong> Verify you are accessing this website via its live GitHub Pages URL (e.g., <em>your-username.github.io/your-repo/</em>) and NOT as a local file (<em>file:///...</em>). Also, double-check that the `GAS_WEB_APP_URL` in this website\'s code is the correct `/exec` URL from your Google Apps Script deployment.<br><br>';
+        displayMessage += '<strong>3. Apps Script Deployment Settings:</strong> Confirm your Google Apps Script is deployed with:<br>';
+        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;- Execute as: <strong>Me (your email)</strong><br>';
+        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;- Who has access: <strong>Anyone</strong><br>(If you recently re-deployed, ensure these settings are still correct and you are using the LATEST deployment URL).<br><br>';
+        displayMessage += '<strong>4. Browser Developer Tools (Network Tab):</strong><br>';
+        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;a. Open Developer Tools (usually F12).<br>';
+        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;b. Go to the "Network" tab.<br>';
+        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;c. Click the "Generate Survey Form" button again.<br>';
+        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;d. Look for a request to `script.google.com/...` that failed. Check its "Status" (e.g., `(failed)`, `CORS error`, `0`, `401`, `403`, `404`, `500`). The "Response" or "Preview" tab for that failed request might give more clues. CORS errors are common if the Apps Script isn\'t correctly configured for "Anyone" access.<br><br>';
+        displayMessage += '<strong>5. Apps Script Executions Log:</strong> In your Google Apps Script project, go to the "Executions" section (left sidebar). Look for recent executions of your `doGet` function. Check if they failed and what error messages are shown there. This helps identify server-side issues.<br><br>';
+        displayMessage += '<strong>6. Browser Extensions / Incognito Mode:</strong> Ad blockers, privacy extensions, or VPNs can sometimes interfere. Try disabling them temporarily, or test the website in an incognito/private browser window.<br><br>';
+        displayMessage += '<strong>7. Wait and Retry:</strong> Occasionally, there might be temporary issues with Google\'s services. You can try again after a few minutes.';
+      }
+      // Sanitize the message before displaying it in HTML to prevent XSS, allow <br> and <strong><em>
+      const sanitizedMessage = displayMessage
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/&lt;br&gt;/g, "<br>")
+        .replace(/&lt;strong&gt;/g, "<strong>")
+        .replace(/&lt;\/strong&gt;/g, "</strong>")
+        .replace(/&lt;em&gt;/g, "<em>")
+        .replace(/&lt;\/em&gt;/g, "</em>");
+      outputDiv.innerHTML = `<p class="message-feedback error-message"><strong>Error:</strong><br>${sanitizedMessage}</p>`; 
+    }
+  </script>
+</body>
+</html>
