@@ -246,7 +246,7 @@
     const outputDiv = document.getElementById('output');
     const configWarningArea = document.getElementById('configWarningArea'); 
 
-    if (GAS_WEB_APP_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+    if (GAS_WEB_APP_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') { // This check is now less likely to trigger if URL is hardcoded correctly
         configWarningArea.innerHTML = '<strong>CONFIGURATION ERROR:</strong> The Google Apps Script Web App URL is still a placeholder. Please edit this HTML file and update it.';
         configWarningArea.className = 'message-feedback config-warning-message';
         configWarningArea.style.display = 'block';
@@ -339,7 +339,7 @@
         displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;a. Open Developer Tools (usually F12).<br>';
         displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;b. Go to the "Network" tab.<br>';
         displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;c. Click the "Generate Survey Form" button again.<br>';
-        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;d. Look for a request to `script.google.com/...` that failed or was redirected (Status 302). Check its "Status" (e.g., `(failed)`, `CORS error`, `0`, `302`, `401`, `403`, `404`, `500`). The "Response" or "Preview" tab for that request might give more clues. CORS errors or 302 redirects are common if the Apps Script isn\'t correctly configured for "Anyone" access.<br><br>';
+        displayMessage += '&nbsp;&nbsp;&nbsp;&nbsp;d. Look for a request to `script.google.com/...` that failed or was redirected (Status 302). Check its "Status" (e.g., `(failed)`, `CORS error`, `0`, `302`, `401`, `403`, `404`, `500`). The "Response" or "Preview" tab for that failed request might give more clues. CORS errors or 302 redirects are common if the Apps Script isn\'t correctly configured for "Anyone" access.<br><br>';
         displayMessage += '<strong>5. Apps Script Executions Log:</strong> In your Google Apps Script project, go to the "Executions" section (left sidebar). Look for recent executions of your `doGet` function. Check if they failed and what error messages are shown there. This helps identify server-side issues.<br><br>';
         displayMessage += '<strong>6. Browser Extensions / Incognito Mode:</strong> Ad blockers, privacy extensions, or VPNs can sometimes interfere. Try disabling them temporarily, or test the website in an incognito/private browser window.<br><br>';
         displayMessage += '<strong>7. Wait and Retry:</strong> Occasionally, there might be temporary issues with Google\'s services. You can try again after a few minutes.';
