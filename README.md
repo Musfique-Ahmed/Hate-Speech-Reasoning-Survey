@@ -37,7 +37,7 @@ Your anonymous responses will be used strictly for **educational and research pu
 
 - **Google Forms** – For survey logic and collection.
 - **GitHub Pages** – To host and share the live survey.
-- **HTML/CSS (Optional)** – For customizing the landing page (if applied).
+- **HTML/CSS** – For customizing the landing page.
 
 ## 🧾 Repository Structure
 
