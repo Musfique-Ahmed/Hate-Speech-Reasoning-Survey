@@ -55,6 +55,8 @@ Your anonymous responses will be used strictly for **educational and research pu
 - [Musfique Ahmed](https://github.com/Musfique-Ahmed)
 - [Tasfiya Binta Karim](https://github.com/TasfiyaBintaKarim)
 - [Nur E Jannat Prachurja](https://github.com/neupra)
+- [Mahera Rezwan](https://github.com/Mahera15)
+- [Katrina Mokbul](https://github.com/Katrina-813)
 
 ## 🤝 Contribution
 
