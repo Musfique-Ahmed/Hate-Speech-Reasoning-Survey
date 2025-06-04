@@ -42,10 +42,15 @@ Your anonymous responses will be used strictly for **educational and research pu
 ## 🧾 Repository Structure
 
 📁 Hate-Speech-Reasoning-Survey/
+
 ├── index.html # Landing page linking to the survey
+
 ├── assets/
+
 │ ├── form-page-1.png
+
 │ └── form-page-2.png
+
 ├── README.md # Project documentation
 
 ## 👥 Contributors
