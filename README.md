@@ -36,7 +36,9 @@ Your anonymous responses will be used strictly for **educational and research pu
 ## 🛠️ Tech Stack
 
 - **Google Forms** – For survey logic and collection.
+- **Google Sheets** – For storing data and to work as a database for the forms.
 - **GitHub Pages** – To host and share the live survey.
+- **Google App Script** – Works as backend to connect the webpage(frontend) with the database.
 - **HTML/CSS** – For customizing the landing page.
 
 ## 🧾 Repository Structure
