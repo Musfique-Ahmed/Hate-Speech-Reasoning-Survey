@@ -50,7 +50,7 @@ Your anonymous responses will be used strictly for **educational and research pu
 │   ├── form-page-1.png    # Screenshot of the survey form (Page 1)
 │   ├── form-page-2.png    # Screenshot of the survey form (Page 2)
 │   └── cover.png          # Screenshot of webpage
-├── README.md              # Project documentation
+└── README.md              # Project documentation
 ```
 
 ## 👥 Contributors
